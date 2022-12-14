@@ -1,0 +1,205 @@
+---
+title: "subcell-correlation"
+format: html
+---
+
+# Comparing Sub-cellular spatial transcriptomics technical variability
+
+```{r}
+#| label: libraries
+#| include: false
+#| echo: false
+source("R/fct_correlation.R")
+library(shinySTRegister)
+library(SpatialExperiment)
+library(data.table)
+```
+
+```{r}
+#| label: constants
+
+NBINS <- 200
+
+```
+
+::: panel-tabset
+## CosMX
+
+Of the three replicates (Lung5), two adjacent ones (2 and 3) were lined up manually (using `shinySTRegister`).
+
+```{r}
+lung5 <- cbind(
+  readRDS("data/cosmx/aligned/Lung5_Rep2_spe.rds"),
+  load_cosmx_as_spatial_experiment(
+    "data/cosmx/Lung5_Rep3_exprMat_file.csv",
+    "data/cosmx/Lung5_Rep3_metadata_file.csv"))
+```
+
+```{r}
+binned_lung5 <- convert_spe_to_image(lung5)
+```
+
+```{r}
+plot_counts(binned_lung5)
+```
+
+```{r}
+sum_counts_per_bin(lung5, NBINS) |>
+  plot_counts_correlations()
+```
+
+## Merscope
+
+```{r}
+ovarian2 <- cbind(
+  readRDS("data/merscope/aligned/HumanOvarianCancerPatient2Slice1_spe.rds"),
+  load_merscope_as_spatial_experiment(
+    "data/merscope/HumanOvarianCancerPatient2Slice3_cell_by_gene.csv",
+    "data/merscope/HumanOvarianCancerPatient2Slice3_cell_metadata.csv"))
+```
+
+```{r}
+binned_ovarian2 <- convert_spe_to_image(ovarian2)
+```
+
+```{r}
+plot_counts(binned_ovarian2)
+```
+
+```{r}
+sum_counts_per_bin(ovarian2, NBINS) |>
+  plot_counts_correlations()
+```
+
+## Xenium
+
+```{r}
+breast <- cbind(
+  readRDS("data/xenium/aligned/Xenium_FFPE_Human_Breast_Cancer_Rep1_spe.rds"),
+  load_xenium_as_spatial_experiment(
+    "data/xenium/Xenium_FFPE_Human_Breast_Cancer_Rep2_cell_feature_matrix.csv",
+    "data/xenium/Xenium_FFPE_Human_Breast_Cancer_Rep2_cells.csv"))
+```
+
+```{r}
+binned_breast <- convert_spe_to_image(breast)
+```
+
+```{r}
+plot_counts(binned_breast)
+```
+
+```{r}
+sum_counts_per_bin(breast, NBINS) |>
+  plot_counts_correlations()
+```
+:::
+
+Note that these alignments were performed by hand, automated alignment (using `RNiftyReg`) failed in all cases except for CosMX. Even in this case, the results were slightly worse than with manual alignment.
+
+```{r}
+#| label: nifty_v_manual
+#| echo: false
+
+nifty_lung <- readRDS("data/lung5s23_niftyreg.rds")
+comparison_cor_data <- data.frame(
+  correlation = sum_counts_per_bin(nifty_lung, NBINS) |>
+    get_binwise_correlation_from_counts(),
+  type = "nifty"
+) |>
+  rbind(
+    data.frame(
+      correlation = sum_counts_per_bin(lung5, NBINS) |>
+        get_binwise_correlation_from_counts(),
+      type = "manual"
+    )
+  )
+
+ggplot(comparison_cor_data, aes(x = correlation, color = type)) +
+  geom_density()
+```
+
+# Comparison across technologies
+
+::: panel-tabset
+## 300 bins
+
+```{r}
+NBINS <- 300
+```
+
+```{r}
+cosmx_cor <- sum_counts_per_bin(lung5, NBINS) |>
+  get_binwise_correlation_from_counts()
+merscope_cor <- sum_counts_per_bin(ovarian2, NBINS) |>
+  get_binwise_correlation_from_counts()
+xenium_cor <- sum_counts_per_bin(breast, NBINS) |>
+  get_binwise_correlation_from_counts()
+
+correlation_data <- data.frame(
+  correlation = c(cosmx_cor, merscope_cor, xenium_cor),
+  type = c(rep("cosmx", length(cosmx_cor)),
+           rep("merscope", length(merscope_cor)),
+           rep("xenium", length(xenium_cor)))
+)
+```
+
+```{r}
+ggplot(correlation_data, aes(x = correlation, color = type)) +
+  geom_density()
+```
+
+## 200 bins
+
+```{r}
+NBINS <- 200
+```
+
+```{r}
+cosmx_cor <- sum_counts_per_bin(lung5, NBINS) |>
+  get_binwise_correlation_from_counts()
+merscope_cor <- sum_counts_per_bin(ovarian2, NBINS) |>
+  get_binwise_correlation_from_counts()
+xenium_cor <- sum_counts_per_bin(breast, NBINS) |>
+  get_binwise_correlation_from_counts()
+
+correlation_data <- data.frame(
+  correlation = c(cosmx_cor, merscope_cor, xenium_cor),
+  type = c(rep("cosmx", length(cosmx_cor)),
+           rep("merscope", length(merscope_cor)),
+           rep("xenium", length(xenium_cor)))
+)
+```
+
+```{r}
+ggplot(correlation_data, aes(x = correlation, color = type)) +
+  geom_density()
+```
+
+## 100 bins
+
+```{r}
+NBINS <- 100
+```
+
+```{r}
+cosmx_cor <- sum_counts_per_bin(lung5, NBINS) |>
+  get_binwise_correlation_from_counts()
+merscope_cor <- sum_counts_per_bin(ovarian2, NBINS) |>
+  get_binwise_correlation_from_counts()
+xenium_cor <- sum_counts_per_bin(breast, NBINS) |>
+  get_binwise_correlation_from_counts()
+
+correlation_data <- data.frame(
+  correlation = c(cosmx_cor, merscope_cor, xenium_cor),
+  type = c(rep("cosmx", length(cosmx_cor)),
+           rep("merscope", length(merscope_cor)),
+           rep("xenium", length(xenium_cor)))
+)
+```
+
+```{r}
+ggplot(correlation_data, aes(x = correlation, color = type)) +
+  geom_density()
+```
+:::

@@ -1,0 +1,16 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "subcell-correlation",
+    "section": "",
+    "text": "Comparison across technologies\n\n300 bins200 bins100 bins\n\n\n\nNBINS <- 300\n\n\ncosmx_cor <- sum_counts_per_bin(lung5, NBINS) |>\n  get_binwise_correlation_from_counts()\nmerscope_cor <- sum_counts_per_bin(ovarian2, NBINS) |>\n  get_binwise_correlation_from_counts()\nxenium_cor <- sum_counts_per_bin(breast, NBINS) |>\n  get_binwise_correlation_from_counts()\n\ncorrelation_data <- data.frame(\n  correlation = c(cosmx_cor, merscope_cor, xenium_cor),\n  type = c(rep(\"cosmx\", length(cosmx_cor)),\n           rep(\"merscope\", length(merscope_cor)),\n           rep(\"xenium\", length(xenium_cor)))\n)\n\n\nggplot(correlation_data, aes(x = correlation, color = type)) +\n  geom_density()\n\n\n\n\n\n\n\nNBINS <- 200\n\n\ncosmx_cor <- sum_counts_per_bin(lung5, NBINS) |>\n  get_binwise_correlation_from_counts()\nmerscope_cor <- sum_counts_per_bin(ovarian2, NBINS) |>\n  get_binwise_correlation_from_counts()\nxenium_cor <- sum_counts_per_bin(breast, NBINS) |>\n  get_binwise_correlation_from_counts()\n\ncorrelation_data <- data.frame(\n  correlation = c(cosmx_cor, merscope_cor, xenium_cor),\n  type = c(rep(\"cosmx\", length(cosmx_cor)),\n           rep(\"merscope\", length(merscope_cor)),\n           rep(\"xenium\", length(xenium_cor)))\n)\n\n\nggplot(correlation_data, aes(x = correlation, color = type)) +\n  geom_density()\n\n\n\n\n\n\n\nNBINS <- 100\n\n\ncosmx_cor <- sum_counts_per_bin(lung5, NBINS) |>\n  get_binwise_correlation_from_counts()\nmerscope_cor <- sum_counts_per_bin(ovarian2, NBINS) |>\n  get_binwise_correlation_from_counts()\nxenium_cor <- sum_counts_per_bin(breast, NBINS) |>\n  get_binwise_correlation_from_counts()\n\ncorrelation_data <- data.frame(\n  correlation = c(cosmx_cor, merscope_cor, xenium_cor),\n  type = c(rep(\"cosmx\", length(cosmx_cor)),\n           rep(\"merscope\", length(merscope_cor)),\n           rep(\"xenium\", length(xenium_cor)))\n)\n\n\nggplot(correlation_data, aes(x = correlation, color = type)) +\n  geom_density()"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "1 + 1\n\n[1] 2"
+  }
+]
