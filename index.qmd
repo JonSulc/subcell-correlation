@@ -1,6 +1,8 @@
 ---
 title: "subcell-correlation"
 format: html
+execute:
+  freeze: true
 ---
 
 # Comparing Sub-cellular spatial transcriptomics technical variability
@@ -40,8 +42,11 @@ binned_lung5 <- convert_spe_to_image(lung5)
 ```
 
 ```{r}
+#| output-location: slide
 plot_counts(binned_lung5)
 ```
+
+### Spot-based correlation across transcripts
 
 ```{r}
 sum_counts_per_bin(lung5, NBINS) |>
@@ -63,8 +68,11 @@ binned_ovarian2 <- convert_spe_to_image(ovarian2)
 ```
 
 ```{r}
+#| output-location: slide
 plot_counts(binned_ovarian2)
 ```
+
+### Spot-based correlation across transcripts
 
 ```{r}
 sum_counts_per_bin(ovarian2, NBINS) |>
@@ -86,8 +94,11 @@ binned_breast <- convert_spe_to_image(breast)
 ```
 
 ```{r}
+#| output-location: slide
 plot_counts(binned_breast)
 ```
+
+### Spot-based correlation across transcripts
 
 ```{r}
 sum_counts_per_bin(breast, NBINS) |>
@@ -95,7 +106,9 @@ sum_counts_per_bin(breast, NBINS) |>
 ```
 :::
 
-Note that these alignments were performed by hand, automated alignment (using `RNiftyReg`) failed in all cases except for CosMX. Even in this case, the results were slightly worse than with manual alignment.
+### RNiftyReg vs. manual alignment
+
+These alignments were performed by hand, automated alignment (using `RNiftyReg`) failed in all cases except for CosMX. Even in this case, the results were slightly worse than with manual alignment.
 
 ```{r}
 #| label: nifty_v_manual
@@ -129,6 +142,7 @@ NBINS <- 300
 ```
 
 ```{r}
+#| echo: false
 cosmx_cor <- sum_counts_per_bin(lung5, NBINS) |>
   get_binwise_correlation_from_counts()
 merscope_cor <- sum_counts_per_bin(ovarian2, NBINS) |>
@@ -156,6 +170,7 @@ NBINS <- 200
 ```
 
 ```{r}
+#| echo: false
 cosmx_cor <- sum_counts_per_bin(lung5, NBINS) |>
   get_binwise_correlation_from_counts()
 merscope_cor <- sum_counts_per_bin(ovarian2, NBINS) |>
@@ -183,6 +198,7 @@ NBINS <- 100
 ```
 
 ```{r}
+#| echo: false
 cosmx_cor <- sum_counts_per_bin(lung5, NBINS) |>
   get_binwise_correlation_from_counts()
 merscope_cor <- sum_counts_per_bin(ovarian2, NBINS) |>
@@ -203,3 +219,7 @@ ggplot(correlation_data, aes(x = correlation, color = type)) +
   geom_density()
 ```
 :::
+
+## Note
+
+These results show a clear difference in the technical variability of these technologies *as applied to these different tissues*. Differences in tissue heterogeneity, genes measured and/or sample surface are likely to influence this comparison.
