@@ -12,45 +12,24 @@ Correlation was assessed in two ways:
 
 -   Spot-wise correlation is the correlation of feature counts in a spot in one slice with those in the same spot on the adjacent slice,
 
-    $$
-    cor_{spot}(S_{i,j}) = cor(\begin{bmatrix}
-    f_{1,i,j} \\
-    f_{2,i,j} \\
-    ... \\
-    f_{n,i,j}
-    \end{bmatrix},
-    \begin{bmatrix}
-    f'_{1,i,j} \\
-    f'_{2,i,j} \\
-    ... \\
-    f'_{n,i,j}
-    \end{bmatrix}
-    )
-    $$
-
-    where $f_{1,i,j}$ is the number of counts for the first feature in spot $i,j$ in the first slice and $f'_{1,i,j}$ is the corresponding measure in the adjacent slice.
+```math
+cor_{spot}(S_{i,j}) = cor(\begin{bmatrix}
+f_{1,i,j} \\
+f_{2,i,j} \\
+... \\
+f_{n,i,j}
+\end{bmatrix},
+\begin{bmatrix}
+f'_{1,i,j} \\
+f'_{2,i,j} \\
+... \\
+f'_{n,i,j}
+\end{bmatrix}
+)
+```
+  where $f_{1,i,j}$ is the number of counts for the first feature in spot $i,j$ in the first slice and $f'_{1,i,j}$ is the corresponding measure in the adjacent slice.
 
 -   Feature-wise correlation is the correlation of a given feature across all spots with the corresponding counts in the adjacent slice,
-
-    ```math
-    cor_{feature}(f_i) = cor(\begin{bmatrix}
-    f_{i,1,1} \\
-    f_{i,1,2} \\
-    ... \\
-    f_{i,2,1} \\
-    ... \\
-    f_{i,l,m}
-    \end{bmatrix},
-    \begin{bmatrix}
-    f'_{i,1,1} \\
-    f'_{i,1,2} \\
-    ... \\
-    f'_{i,2,1} \\
-    ... \\
-    f'_{i,l,m}
-    \end{bmatrix}
-    )
-    ```
 
 ```math
 cor_{feature}(f_i) = cor(\begin{bmatrix}

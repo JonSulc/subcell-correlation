@@ -54,9 +54,9 @@ ul.task-list li input[type="checkbox"] {
 <p>Adjacent slices were lined up using the <a href="https://github.com/JonSulc/shinySTRegister">shinySTRegister package</a>. Transcript counts were then binned to create pseudo-spots which could be compared across slices.</p>
 <p>Correlation was assessed in two ways:</p>
 <ul>
-<li><p>Spot-wise correlation is the correlation of feature counts in a spot in one slice with those in the same spot on the adjacent slice,</p>
-<p><span class="math display">\[
-cor_{spot}(S_{i,j}) = cor(\begin{bmatrix}
+<li>Spot-wise correlation is the correlation of feature counts in a spot in one slice with those in the same spot on the adjacent slice,</li>
+</ul>
+<pre class="math"><code>cor_{spot}(S_{i,j}) = cor(\begin{bmatrix}
 f_{1,i,j} \\
 f_{2,i,j} \\
 ... \\
@@ -68,12 +68,12 @@ f'_{2,i,j} \\
 ... \\
 f'_{n,i,j}
 \end{bmatrix}
-)
-\]</span></p>
-<p>where <span class="math inline">\(f_{1,i,j}\)</span> is the number of counts for the first feature in spot <span class="math inline">\(i,j\)</span> in the first slice and <span class="math inline">\(f'_{1,i,j}\)</span> is the corresponding measure in the adjacent slice.</p></li>
-<li><p>Feature-wise correlation is the correlation of a given feature across all spots with the corresponding counts in the adjacent slice,</p>
-<p><span class="math display">\[
-cor_{feature}(f_i) = cor(\begin{bmatrix}
+)</code></pre>
+<p>where <span class="math inline">\(f_{1,i,j}\)</span> is the number of counts for the first feature in spot <span class="math inline">\(i,j\)</span> in the first slice and <span class="math inline">\(f'_{1,i,j}\)</span> is the corresponding measure in the adjacent slice.</p>
+<ul>
+<li>Feature-wise correlation is the correlation of a given feature across all spots with the corresponding counts in the adjacent slice,</li>
+</ul>
+<pre class="math"><code>cor_{feature}(f_i) = cor(\begin{bmatrix}
 f_{i,1,1} \\
 f_{i,1,2} \\
 ... \\
@@ -89,9 +89,7 @@ f'_{i,2,1} \\
 ... \\
 f'_{i,l,m}
 \end{bmatrix}
-)
-\]</span></p></li>
-</ul>
+)</code></pre>
 <section id="setup" class="level2">
 <h2 class="anchored" data-anchor-id="setup">Setup</h2>
 <ol type="1">
