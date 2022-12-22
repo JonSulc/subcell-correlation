@@ -3,9 +3,10 @@ title: "subcell-correlation"
 format: html
 execute:
   freeze: true
+  warning: false
 ---
 
-# Comparing Sub-cellular spatial transcriptomics technical variability
+# Alignment of adjacent slides
 
 ```{r}
 #| label: libraries
@@ -106,6 +107,16 @@ sum_counts_per_bin(breast, NBINS) |>
 ```
 :::
 
+```{r}
+#| include: false
+
+saveRDS(list(CosMx = lung5,
+             MERSCOPE = ovarian2,
+             Xenium = breast),
+        "data/aligned_samples_list.rds")
+
+```
+
 ### RNiftyReg vs. manual alignment
 
 These alignments were performed by hand, automated alignment (using `RNiftyReg`) failed in all cases except for CosMX. Even in this case, the results were slightly worse than with manual alignment.
@@ -131,95 +142,3 @@ comparison_cor_data <- data.frame(
 ggplot(comparison_cor_data, aes(x = correlation, color = type)) +
   geom_density()
 ```
-
-# Comparison across technologies
-
-::: panel-tabset
-## 300 bins
-
-```{r}
-NBINS <- 300
-```
-
-```{r}
-#| echo: false
-cosmx_cor <- sum_counts_per_bin(lung5, NBINS) |>
-  get_binwise_correlation_from_counts()
-merscope_cor <- sum_counts_per_bin(ovarian2, NBINS) |>
-  get_binwise_correlation_from_counts()
-xenium_cor <- sum_counts_per_bin(breast, NBINS) |>
-  get_binwise_correlation_from_counts()
-
-correlation_data <- data.frame(
-  correlation = c(cosmx_cor, merscope_cor, xenium_cor),
-  type = c(rep("cosmx", length(cosmx_cor)),
-           rep("merscope", length(merscope_cor)),
-           rep("xenium", length(xenium_cor)))
-)
-```
-
-```{r}
-ggplot(correlation_data, aes(x = correlation, color = type)) +
-  geom_density()
-```
-
-## 200 bins
-
-```{r}
-NBINS <- 200
-```
-
-```{r}
-#| echo: false
-cosmx_cor <- sum_counts_per_bin(lung5, NBINS) |>
-  get_binwise_correlation_from_counts()
-merscope_cor <- sum_counts_per_bin(ovarian2, NBINS) |>
-  get_binwise_correlation_from_counts()
-xenium_cor <- sum_counts_per_bin(breast, NBINS) |>
-  get_binwise_correlation_from_counts()
-
-correlation_data <- data.frame(
-  correlation = c(cosmx_cor, merscope_cor, xenium_cor),
-  type = c(rep("cosmx", length(cosmx_cor)),
-           rep("merscope", length(merscope_cor)),
-           rep("xenium", length(xenium_cor)))
-)
-```
-
-```{r}
-ggplot(correlation_data, aes(x = correlation, color = type)) +
-  geom_density()
-```
-
-## 100 bins
-
-```{r}
-NBINS <- 100
-```
-
-```{r}
-#| echo: false
-cosmx_cor <- sum_counts_per_bin(lung5, NBINS) |>
-  get_binwise_correlation_from_counts()
-merscope_cor <- sum_counts_per_bin(ovarian2, NBINS) |>
-  get_binwise_correlation_from_counts()
-xenium_cor <- sum_counts_per_bin(breast, NBINS) |>
-  get_binwise_correlation_from_counts()
-
-correlation_data <- data.frame(
-  correlation = c(cosmx_cor, merscope_cor, xenium_cor),
-  type = c(rep("cosmx", length(cosmx_cor)),
-           rep("merscope", length(merscope_cor)),
-           rep("xenium", length(xenium_cor)))
-)
-```
-
-```{r}
-ggplot(correlation_data, aes(x = correlation, color = type)) +
-  geom_density()
-```
-:::
-
-## Note
-
-These results show a clear difference in the technical variability of these technologies *as applied to these different tissues*. Differences in tissue heterogeneity, genes measured and/or sample surface are likely to influence this comparison.

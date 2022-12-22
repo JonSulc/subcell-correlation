@@ -1,0 +1,13 @@
+---
+title: "Summary"
+---
+
+# Summary
+
+| Feature                                   | Xenium         | CosMx SMI | MERSCOPE     |
+|------------------|------------------|------------------|------------------|
+| Maximum number of genes (current/release) | 1000 (313/500) | 980 (979) | 500 (500(?)) |
+| Maximum number of proteins                | Yes...         | 108       | Yes?         |
+| Slide size ($cm^2$)                       | 2.8            | \~1       | \~1          |
+| Cell boundary detection                   | No             | Yes       | Yes          |
+| FFPE?                                     | Yes            | Yes       | Yes          |

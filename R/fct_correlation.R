@@ -36,7 +36,16 @@ split_counts_by_sample <- function(counts) {
   split(counts[, -c("binx", "biny", "sample_id")],
         counts$sample_id)
 }
-
+get_genewise_correlation_from_counts <- function(counts) {
+  split_counts_by_sample(counts) |>
+    get_genewise_correlation_from_split_counts()
+}
+get_genewise_correlation_from_split_counts <- function(split_counts) {
+  mapply(cor,
+         as.data.frame(split_counts[[1]]),
+         as.data.frame(split_counts[[2]]),
+         use = "pair")
+}
 get_binwise_correlation_from_counts <- function(counts) {
   split_counts_by_sample(counts) |>
     get_binwise_correlation_from_split_counts()
@@ -44,8 +53,8 @@ get_binwise_correlation_from_counts <- function(counts) {
 
 get_binwise_correlation_from_split_counts <- function(split_counts) {
   mapply(cor,
-         as.data.frame(split_counts[[1]]),
-         as.data.frame(split_counts[[2]]),
+         as.data.frame(split_counts[[1]] |> t()),
+         as.data.frame(split_counts[[2]] |> t()),
          use = "pair")
 }
 
@@ -84,4 +93,27 @@ plot_counts_correlations <- function(counts, plot_shuffled = TRUE) {
                              type = "shuffled"))
   ggplot(data, aes(x = correlation, color = type)) +
     geom_density()
+}
+
+get_correlation_data_frame <- function(
+    sample_list,
+    dimension = "spot",
+    correlation_function = ifelse(dimension == "spot",
+                                  get_binwise_correlation_from_counts,
+                                  get_genewise_correlation_from_counts),
+    nbins = 200
+  ) {
+  Reduce(
+    rbind,
+    lapply(
+      names(sample_list),
+      \(sample_name) {
+        data.frame(
+          Correlation = sum_counts_per_bin(sample_list[[sample_name]], nbins) |>
+            correlation_function(),
+          Technology = sample_name
+        )
+      }
+    )
+  )
 }

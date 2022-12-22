@@ -1,23 +1,37 @@
 [
   {
-    "objectID": "index.html",
-    "href": "index.html",
+    "objectID": "alignment.html",
+    "href": "alignment.html",
     "title": "subcell-correlation",
     "section": "",
-    "text": "NBINS <- 200\n\n\nCosMXMerscopeXenium\n\n\nOf the three replicates (Lung5), two adjacent ones (2 and 3) were lined up manually (using shinySTRegister).\n\nlung5 <- cbind(\n  readRDS(\"data/cosmx/aligned/Lung5_Rep2_spe.rds\"),\n  load_cosmx_as_spatial_experiment(\n    \"data/cosmx/Lung5_Rep3_exprMat_file.csv\",\n    \"data/cosmx/Lung5_Rep3_metadata_file.csv\"))\n\n'sample_id's are duplicated across 'SpatialExperiment' objects to cbind; appending sample indices.\n\n\n\nbinned_lung5 <- convert_spe_to_image(lung5)\n\n\nplot_counts(binned_lung5)\n\n\n\n\n\n\n\nsum_counts_per_bin(lung5, NBINS) |>\n  plot_counts_correlations()\n\n\n\n\n\n\n\n\novarian2 <- cbind(\n  readRDS(\"data/merscope/aligned/HumanOvarianCancerPatient2Slice1_spe.rds\"),\n  load_merscope_as_spatial_experiment(\n    \"data/merscope/HumanOvarianCancerPatient2Slice3_cell_by_gene.csv\",\n    \"data/merscope/HumanOvarianCancerPatient2Slice3_cell_metadata.csv\"))\n\n'sample_id's are duplicated across 'SpatialExperiment' objects to cbind; appending sample indices.\n\n\n\nbinned_ovarian2 <- convert_spe_to_image(ovarian2)\n\n\nplot_counts(binned_ovarian2)\n\n\n\n\n\n\n\nsum_counts_per_bin(ovarian2, NBINS) |>\n  plot_counts_correlations()\n\n\n\n\n\n\n\n\nbreast <- cbind(\n  readRDS(\"data/xenium/aligned/Xenium_FFPE_Human_Breast_Cancer_Rep1_spe.rds\"),\n  load_xenium_as_spatial_experiment(\n    \"data/xenium/Xenium_FFPE_Human_Breast_Cancer_Rep2_cell_feature_matrix.csv\",\n    \"data/xenium/Xenium_FFPE_Human_Breast_Cancer_Rep2_cells.csv\"))\n\n'sample_id's are duplicated across 'SpatialExperiment' objects to cbind; appending sample indices.\n\n\n\nbinned_breast <- convert_spe_to_image(breast)\n\n\nplot_counts(binned_breast)\n\n\n\n\n\n\n\nsum_counts_per_bin(breast, NBINS) |>\n  plot_counts_correlations()\n\n\n\n\n\n\n\n\n\n\nThese alignments were performed by hand, automated alignment (using RNiftyReg) failed in all cases except for CosMX. Even in this case, the results were slightly worse than with manual alignment."
+    "text": "Alignment of adjacent slides\n\nNBINS <- 200\n\n\nCosMXMerscopeXenium\n\n\nOf the three replicates (Lung5), two adjacent ones (2 and 3) were lined up manually (using shinySTRegister).\n\nlung5 <- cbind(\n  readRDS(\"data/cosmx/aligned/Lung5_Rep2_spe.rds\"),\n  load_cosmx_as_spatial_experiment(\n    \"data/cosmx/Lung5_Rep3_exprMat_file.csv\",\n    \"data/cosmx/Lung5_Rep3_metadata_file.csv\"))\n\n\nbinned_lung5 <- convert_spe_to_image(lung5)\n\n\nplot_counts(binned_lung5)\n\n\n\n\n\nSpot-based correlation across transcripts\n\nsum_counts_per_bin(lung5, NBINS) |>\n  plot_counts_correlations()\n\n\n\n\n\n\n\n\novarian2 <- cbind(\n  readRDS(\"data/merscope/aligned/HumanOvarianCancerPatient2Slice1_spe.rds\"),\n  load_merscope_as_spatial_experiment(\n    \"data/merscope/HumanOvarianCancerPatient2Slice3_cell_by_gene.csv\",\n    \"data/merscope/HumanOvarianCancerPatient2Slice3_cell_metadata.csv\"))\n\n\nbinned_ovarian2 <- convert_spe_to_image(ovarian2)\n\n\nplot_counts(binned_ovarian2)\n\n\n\n\n\nSpot-based correlation across transcripts\n\nsum_counts_per_bin(ovarian2, NBINS) |>\n  plot_counts_correlations()\n\n\n\n\n\n\n\n\nbreast <- cbind(\n  readRDS(\"data/xenium/aligned/Xenium_FFPE_Human_Breast_Cancer_Rep1_spe.rds\"),\n  load_xenium_as_spatial_experiment(\n    \"data/xenium/Xenium_FFPE_Human_Breast_Cancer_Rep2_cell_feature_matrix.csv\",\n    \"data/xenium/Xenium_FFPE_Human_Breast_Cancer_Rep2_cells.csv\"))\n\n\nbinned_breast <- convert_spe_to_image(breast)\n\n\nplot_counts(binned_breast)\n\n\n\n\n\nSpot-based correlation across transcripts\n\nsum_counts_per_bin(breast, NBINS) |>\n  plot_counts_correlations()\n\n\n\n\n\n\n\n\n\nRNiftyReg vs. manual alignment\nThese alignments were performed by hand, automated alignment (using RNiftyReg) failed in all cases except for CosMX. Even in this case, the results were slightly worse than with manual alignment."
+  },
+  {
+    "objectID": "comparison.html",
+    "href": "comparison.html",
+    "title": "Comparison",
+    "section": "",
+    "text": "Spot-based correlation was calculated as \\[\ncor(S_{i,j}, S'_{i,j})\\,,\\; i,j \\in [1, 2, ..., 200]\n\\]\n\n300 bins200 bins100 bins"
+  },
+  {
+    "objectID": "comparison.html#note",
+    "href": "comparison.html#note",
+    "title": "Comparison",
+    "section": "Note",
+    "text": "Note\nThese results show a clear difference in the technical variability of these technologies as applied to different tissues. Differences in tissue heterogeneity, genes measured and/or sample surface are likely to influence this comparison."
+  },
+  {
+    "objectID": "summary.html",
+    "href": "summary.html",
+    "title": "Summary",
+    "section": "",
+    "text": "Summary\n\n\n\n\n\n\n\n\n\nFeature\nXenium\nCosMx SMI\nMERSCOPE\n\n\n\n\nMaximum number of genes (current/release)\n1000 (313/500)\n980 (979)\n500 (500(?))\n\n\nMaximum number of proteins\nYes…\n108\nYes?\n\n\nSlide size (\\(cm^2\\))\n2.8\n~1\n~1\n\n\nCell boundary detection\nNo\nYes\nYes\n\n\nFFPE?\nYes\nYes\nYes"
   },
   {
     "objectID": "about.html",
     "href": "about.html",
     "title": "About",
     "section": "",
-    "text": "1 + 1\n\n[1] 2"
-  },
-  {
-    "objectID": "index.html#note",
-    "href": "index.html#note",
-    "title": "subcell-correlation",
-    "section": "Note",
-    "text": "Note\nThese results show a clear difference in the technical variability of these technologies as applied to these different tissues. Differences in tissue heterogeneity, genes measured and/or sample surface are likely to influence this comparison."
+    "text": "About this site\n\n1 + 1\n\n[1] 2"
   }
 ]

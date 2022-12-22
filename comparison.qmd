@@ -1,0 +1,93 @@
+---
+title: "Comparison"
+execute:
+  freeze: true
+  warning: false
+---
+
+```{r}
+#| label: libraries
+#| include: false
+#| echo: false
+source("R/fct_correlation.R")
+library(shinySTRegister)
+library(SpatialExperiment)
+library(data.table)
+sample_list <- readRDS("data/aligned_samples_list.rds")
+```
+
+
+# Spot-based correlation across technologies
+Spot-based correlation was calculated as
+$$
+cor(S_{i,j}, S'_{i,j})\,,\; i,j \in [1, 2, ..., 200]
+$$
+
+::: {.panel-tabset group="nbins"}
+
+## 300 bins
+```{r}
+#| echo: false
+get_correlation_data_frame(sample_list, nbins = 300) |>
+ggplot(aes(x = Correlation, color = Technology)) +
+  geom_density() +
+  theme_minimal()
+```
+## 200 bins
+```{r}
+#| echo: false
+get_correlation_data_frame(sample_list, nbins = 200) |>
+ggplot(aes(x = Correlation, color = Technology)) +
+  geom_density() +
+  theme_minimal()
+```
+
+## 100 bins
+```{r}
+#| echo: false
+get_correlation_data_frame(sample_list, nbins = 100) |>
+ggplot(aes(x = Correlation, color = Technology)) +
+  geom_density() +
+  theme_minimal()
+```
+:::
+
+# Feature-based correlation across technologies
+Feature-based correlation was calculated as
+$$
+cor(f_{i}, f'_{i})\,,\; i \in [1, 2, ..., N_{features}]
+$$
+
+::: {.panel-tabset group="nbins"}
+
+## 300 bins
+```{r}
+#| echo: false
+get_correlation_data_frame(sample_list, "gene", nbins = 300) |>
+ggplot(aes(x = Correlation, color = Technology)) +
+  geom_density() +
+  theme_minimal()
+```
+
+## 200 bins
+```{r}
+#| echo: false
+get_correlation_data_frame(sample_list, "gene", nbins = 200) |>
+ggplot(aes(x = Correlation, color = Technology)) +
+  geom_density() +
+  theme_minimal()
+```
+
+## 100 bins
+```{r}
+#| echo: false
+get_correlation_data_frame(sample_list, "gene", nbins = 100) |>
+ggplot(aes(x = Correlation, color = Technology)) +
+  geom_density() +
+  theme_minimal()
+```
+:::
+
+## Note
+
+These results show a clear difference in the technical variability of these technologies *as applied to different tissues*. Differences in tissue heterogeneity, genes measured and/or sample surface are likely to influence this comparison.
