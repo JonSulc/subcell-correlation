@@ -101,8 +101,11 @@ get_correlation_data_frame <- function(
     correlation_function = ifelse(dimension == "spot",
                                   get_binwise_correlation_from_counts,
                                   get_genewise_correlation_from_counts),
-    nbins = 200
+    nbins = 200,
+    only_common_features = FALSE
   ) {
+  if (only_common_features)
+    sample_list <- subset_common_features(sample_list)
   Reduce(
     rbind,
     lapply(
@@ -116,4 +119,45 @@ get_correlation_data_frame <- function(
       }
     )
   )
+}
+
+subset_common_features <- function(sample_list) {
+  common_features <- Reduce(
+    intersect,
+    lapply(
+      sample_list,
+      rownames
+    )
+  )
+
+  lapply(
+    sample_list,
+    \(sample) sample[common_features, ]
+  )
+}
+
+plot_counts_correlation_2d <- function(counts,
+                                       minimal = FALSE) {
+  counts_plot <- data.frame(
+    Correlation = get_binwise_correlation_from_counts(counts),
+    x = counts$binx[counts$sample_id == counts$sample_id[1]],
+    y = counts$biny[counts$sample_id == counts$sample_id[1]]
+  ) |>
+    ggplot(aes(x = x, y = y, fill = Correlation)) +
+    geom_raster() +
+    # viridis::scale_fill_viridis(trans = ifelse(log1p, "log1p", "identity")) +
+    viridis::scale_fill_viridis() +
+    theme_minimal()
+
+  if (minimal)
+    counts_plot <- counts_plot +
+      theme(axis.text = element_blank(), legend.position = "none")
+
+  counts_plot
+}
+
+plot_spe_correlation_2d <- function(spe, nbins = 200, ...) {
+  spe |>
+    sum_counts_per_bin(nbins, nbins) |>
+    plot_counts_correlation_2d()
 }

@@ -1,0 +1,91 @@
+---
+title: "Comparison (common features)"
+execute:
+  freeze: true
+  warning: false
+---
+
+```{r}
+#| label: libraries
+#| include: false
+#| echo: false
+source("R/fct_correlation.R")
+library(shinySTRegister)
+library(SpatialExperiment)
+library(data.table)
+sample_list <- readRDS("data/aligned_samples_list.rds")
+```
+
+The correlation between adjacent slices was repeated but including only those features in common between all three technologies.
+
+# Spot-wise correlation
+
+::: {.panel-tabset group="nbins"}
+## 300 bins
+
+```{r}
+#| echo: false
+get_correlation_data_frame(sample_list, nbins = 300, only_common_features = TRUE) |>
+ggplot(aes(x = Correlation, color = Technology)) +
+  geom_density() +
+  theme_minimal()
+```
+
+## 200 bins
+
+```{r}
+#| echo: false
+get_correlation_data_frame(sample_list, nbins = 200, only_common_features = TRUE) |>
+ggplot(aes(x = Correlation, color = Technology)) +
+  geom_density() +
+  theme_minimal()
+```
+
+## 100 bins
+
+```{r}
+#| echo: false
+get_correlation_data_frame(sample_list, nbins = 100, only_common_features = TRUE) |>
+ggplot(aes(x = Correlation, color = Technology)) +
+  geom_density() +
+  theme_minimal()
+```
+:::
+
+# Feature-wise correlation
+
+::: {.panel-tabset group="nbins"}
+## 300 bins
+
+```{r}
+#| echo: false
+get_correlation_data_frame(sample_list, "gene", nbins = 300, only_common_features = TRUE) |>
+ggplot(aes(x = Correlation, color = Technology)) +
+  geom_density() +
+  theme_minimal()
+```
+
+## 200 bins
+
+```{r}
+#| echo: false
+get_correlation_data_frame(sample_list, "gene", nbins = 200, only_common_features = TRUE) |>
+ggplot(aes(x = Correlation, color = Technology)) +
+  geom_density() +
+  theme_minimal()
+```
+
+## 100 bins
+
+```{r}
+#| echo: false
+get_correlation_data_frame(sample_list, "gene", nbins = 100, only_common_features = TRUE) |>
+ggplot(aes(x = Correlation, color = Technology)) +
+  geom_density() +
+  theme_minimal()
+```
+:::
+
+## Note
+
+These results show a clear difference in the technical variability of these technologies *as applied to different tissues*. Differences in tissue heterogeneity, genes measured and/or sample surface are likely to influence this comparison.

@@ -25,6 +25,8 @@ NBINS <- 200
 
 ```
 
+::: column-screen
+
 ::: panel-tabset
 ## CosMX
 
@@ -43,9 +45,12 @@ binned_lung5 <- convert_spe_to_image(lung5)
 ```
 
 ```{r}
-#| output-location: slide
+#| layout-nrow: 1
 plot_counts(binned_lung5)
+
+plot_spe_correlation_2d(lung5)
 ```
+
 
 ### Spot-based correlation across transcripts
 
@@ -69,8 +74,10 @@ binned_ovarian2 <- convert_spe_to_image(ovarian2)
 ```
 
 ```{r}
-#| output-location: slide
+#| layout-nrow: 1
 plot_counts(binned_ovarian2)
+
+plot_spe_correlation_2d(ovarian2)
 ```
 
 ### Spot-based correlation across transcripts
@@ -95,8 +102,10 @@ binned_breast <- convert_spe_to_image(breast)
 ```
 
 ```{r}
-#| output-location: slide
+#| layout-nrow: 1
 plot_counts(binned_breast)
+
+plot_spe_correlation_2d(breast)
 ```
 
 ### Spot-based correlation across transcripts
@@ -105,6 +114,8 @@ plot_counts(binned_breast)
 sum_counts_per_bin(breast, NBINS) |>
   plot_counts_correlations()
 ```
+:::
+
 :::
 
 ```{r}

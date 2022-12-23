@@ -9,6 +9,8 @@ website:
         text: Alignment
       - href: comparison.qmd
         text: Comparison
+      - href: comparison_common.qmd
+        text: Caomparison\n(common features)
       - href: summary.qmd
         text: Summary
 format:
