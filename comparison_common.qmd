@@ -1,91 +1,215 @@
 ---
 title: "Comparison (common features)"
 execute:
-  freeze: true
   warning: false
+server: shiny
 ---
 
 ```{r}
-#| label: libraries
-#| include: false
-#| echo: false
-source("R/fct_correlation.R")
-library(shinySTRegister)
-library(SpatialExperiment)
-library(data.table)
+#| context: setup
+
+library(DT)
+```
+
+```{r}
+#| context: data
+
 sample_list <- readRDS("data/aligned_samples_list.rds")
 ```
 
 The correlation between adjacent slices was repeated but including only those features in common between all three technologies.
 
-# Spot-wise correlation
-
-::: {.panel-tabset group="nbins"}
-## 300 bins
-
-```{r}
-#| echo: false
-get_correlation_data_frame(sample_list, nbins = 300, only_common_features = TRUE) |>
-ggplot(aes(x = Correlation, color = Technology)) +
-  geom_density() +
-  theme_minimal()
-```
-
-## 200 bins
-
-```{r}
-#| echo: false
-get_correlation_data_frame(sample_list, nbins = 200, only_common_features = TRUE) |>
-ggplot(aes(x = Correlation, color = Technology)) +
-  geom_density() +
-  theme_minimal()
-```
-
-## 100 bins
-
-```{r}
-#| echo: false
-get_correlation_data_frame(sample_list, nbins = 100, only_common_features = TRUE) |>
-ggplot(aes(x = Correlation, color = Technology)) +
-  geom_density() +
-  theme_minimal()
-```
-:::
+**NOTE: After careful consideration, it seems like spot-wise correlation is** **likely less useful.** This is simply because the presence of features with constant expression (spatially), either close to zero for absent features or near baseline for, e.g., housekeeping genes, would inflate the correlation coefficient, without actually representing greater technical accuracy. The results below are shown only for feature-wise correlation.
 
 # Feature-wise correlation
 
-::: {.panel-tabset group="nbins"}
-## 300 bins
+::: column-screen
 
 ```{r}
 #| echo: false
-get_correlation_data_frame(sample_list, "gene", nbins = 300, only_common_features = TRUE) |>
-ggplot(aes(x = Correlation, color = Technology)) +
-  geom_density() +
-  theme_minimal()
-```
 
-## 200 bins
+sliderInput("nbins", "Number of bins on each axis", 100, 500, 200, step = 50)
+actionButton("update", "Update")
+```
 
 ```{r}
 #| echo: false
-get_correlation_data_frame(sample_list, "gene", nbins = 200, only_common_features = TRUE) |>
-ggplot(aes(x = Correlation, color = Technology)) +
-  geom_density() +
-  theme_minimal()
+#| layout-nrow: 1
+
+plotOutput("correlation_density", brush = "correlation_density_brush")
+plotOutput("gene_expression")
 ```
 
-## 100 bins
+```{r}
+#| layout-nrow: 1
+#| echo: false
+
+DTOutput("cosmx_genes")
+DTOutput("merscope_genes")
+DTOutput("xenium_genes")
+```
 
 ```{r}
 #| echo: false
-get_correlation_data_frame(sample_list, "gene", nbins = 100, only_common_features = TRUE) |>
-ggplot(aes(x = Correlation, color = Technology)) +
-  geom_density() +
-  theme_minimal()
+
+plotOutput("function_plot")
 ```
+
+
+```{r}
+#| label: libraries
+#| include: false
+#| echo: false
+#| context: server
+
+source("R/fct_correlation.R")
+if (!file.exists("data/all_expression_data.rds")) {
+  source("R/preprocess.R")
+} else {
+  all_expression_data <- readRDS("data/all_expression_data.rds")
+}
+library(shinySTRegister)
+library(SpatialExperiment)
+library(data.table)
+options(shiny.reactlog = TRUE)
+```
+
+```{r}
+#| context: server
+
+correlation_data <- reactive({
+  get_correlation_data_frame(sample_list, "gene",
+                             nbins = input$nbins,
+                             only_common_features = TRUE)
+}) |>
+  bindEvent(input$update, ignoreNULL = FALSE)
+
+output$correlation_density <- renderPlot({
+  ggplot(correlation_data(), aes(x = Correlation, color = Technology)) +
+    geom_density() +
+    geom_point(data = feature$data, y = 1, shape= "|", size = 7) +
+    theme_minimal()
+})
+
+subsetted_correlation_data <- reactive({
+  scd <- correlation_data()[
+    Correlation > input$correlation_density_brush$xmin &
+      Correlation < input$correlation_density_brush$xmax
+  ]
+  if (nrow(scd) == 0)
+    scd <- correlation_data()
+  scd
+})
+
+output$cosmx_genes <- renderDT({
+  subsetted_correlation_data()[
+      Technology == "CosMx"
+  ] |>
+    DT::datatable(selection = "single")
+})
+output$merscope_genes <- renderDT({
+  subsetted_correlation_data()[
+      Technology == "MERSCOPE"
+  ] |>
+    DT::datatable(selection = "single")
+})
+output$xenium_genes <- renderDT({
+  subsetted_correlation_data()[
+      Technology == "Xenium"
+  ] |>
+    DT::datatable(selection = "single")
+})
+
+expression_data <- reactive({
+  all_expression_data[
+    ,
+    lapply(.SD, \(x) mean(log1p(x))),
+    .SDcols = is.numeric,
+    by = Technology
+  ] |>
+    reshape2::melt(id.vars = "Technology",
+                   variable.name = "Feature",
+                   value.name = "Expression") |>
+    as.data.table()
+})
+
+all_data <- reactive({
+  expression_data()[
+    correlation_data(),
+    on = .(Technology, Feature)
+  ]
+})
+
+output$gene_expression <- renderPlot({
+  expression_data()[
+    subsetted_correlation_data(),
+    on = c("Technology", "Feature")
+  ] |>
+    ggplot(aes(x = Expression, y = Technology,
+               fill = Technology, color = Technology)) +
+    geom_violin(alpha = .3) +
+    geom_point() +
+    geom_point(data = feature$data, size = 10, shape = "|")
+})
+
+output$function_plot <- renderPlot({
+  ggplot(all_data(), aes(x = Expression, y = Correlation, color = Technology)) +
+    geom_point() +
+    geom_smooth()
+})
+```
+
+```{r}
+#| context: server
+
+feature <- reactiveValues()
+
+observe({
+  feature$selected <- subsetted_correlation_data()[
+      "CosMx", on = .(Technology)
+    ][
+      input$cosmx_genes_rows_selected
+    ]
+  DT::dataTableProxy("merscope_genes") |>
+    DT::selectRows(NULL)
+  DT::dataTableProxy("xenium_genes") |>
+    DT::selectRows(NULL)
+}) |>
+  bindEvent(input$cosmx_genes_rows_selected)
+observe({
+  feature$selected <- subsetted_correlation_data()[
+      "MERSCOPE", on = .(Technology)
+    ][
+      input$merscope_genes_rows_selected
+    ]
+  DT::dataTableProxy("cosmx_genes") |>
+    DT::selectRows(NULL)
+  DT::dataTableProxy("xenium_genes") |>
+    DT::selectRows(NULL)
+}) |>
+  bindEvent(input$merscope_genes_rows_selected)
+observe({
+  feature$selected <- subsetted_correlation_data()[
+      "Xenium", on = .(Technology)
+    ][
+      input$xenium_genes_rows_selected
+    ]
+  DT::dataTableProxy("cosmx_genes") |>
+    DT::selectRows(NULL)
+  DT::dataTableProxy("merscope_genes") |>
+    DT::selectRows(NULL)
+}) |>
+  bindEvent(input$xenium_genes_rows_selected)
+
+observe({
+  feature$data <- expression_data()[
+    correlation_data()[feature$selected,
+                       on = .(Feature)],
+    on = .(Technology, Feature)
+  ]
+}) |>
+  bindEvent(feature$selected)
+```
+
+
 :::
-
-## Note
-
-These results show a clear difference in the technical variability of these technologies *as applied to different tissues*. Differences in tissue heterogeneity, genes measured and/or sample surface are likely to influence this comparison.

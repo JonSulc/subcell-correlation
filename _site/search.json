@@ -53,7 +53,7 @@
     "href": "comparison_common.html",
     "title": "Comparison (common features)",
     "section": "",
-    "text": "The correlation between adjacent slices was repeated but including only those features in common between all three technologies."
+    "text": "The correlation between adjacent slices was repeated but including only those features in common between all three technologies.\nNOTE: After careful consideration, it seems like spot-wise correlation is likely less useful. This is simply because the presence of features with constant expression (spatially), either close to zero for absent features or near baseline for, e.g., housekeeping genes, would inflate the correlation coefficient, without actually representing greater technical accuracy. The results below are shown only for feature-wise correlation.\n\nFeature-wise correlation\n\n\n\nNumber of bins on each axis\n\n\n\n\nUpdate"
   },
   {
     "objectID": "comparison_common.html#note",

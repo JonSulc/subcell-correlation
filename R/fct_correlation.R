@@ -111,7 +111,8 @@ get_correlation_data_frame <- function(
     lapply(
       names(sample_list),
       \(sample_name) {
-        data.frame(
+        data.table(
+          Feature = rownames(sample_list[[sample_name]]),
           Correlation = sum_counts_per_bin(sample_list[[sample_name]], nbins) |>
             correlation_function(),
           Technology = sample_name
